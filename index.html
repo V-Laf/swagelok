@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Swagelok Inventory — CARES Lab</title>
+<style>
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;color:#222;min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.hdr{background:#1F4E79;color:#fff;padding:0 20px;display:flex;align-items:center;
+     justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;
+     box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hdr-logo{font-size:17px;font-weight:700}
+.hdr-sub{font-size:11px;opacity:.6;margin-top:1px}
+.hdr-status{font-size:11px;opacity:.7;text-align:right}
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+.container{max-width:1300px;margin:0 auto;padding:20px 16px}
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.09);overflow:hidden}
+
+/* ── Filters ─────────────────────────────────────────────────────────────── */
+.filter-card{padding:18px 20px;margin-bottom:18px}
+.filter-card h2{font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;
+                letter-spacing:.07em;margin-bottom:14px}
+.fg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.fg label{display:block;font-size:10px;font-weight:700;color:#888;margin-bottom:3px;
+          text-transform:uppercase;letter-spacing:.05em}
+select,input{width:100%;padding:8px 10px;border:1.5px solid #ddd;border-radius:6px;
+             font-size:13px;background:#fff;font-family:Arial,sans-serif}
+select:focus,input:focus{outline:none;border-color:#2E75B6}
+.filter-foot{margin-top:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.btn-clear{padding:7px 16px;background:#e8f0fe;color:#1F4E79;border:none;border-radius:6px;
+           font-size:13px;font-weight:600;cursor:pointer}
+.btn-clear:hover{background:#cce0fb}
+.rc{font-size:13px;color:#aaa}
+.hint{font-size:11px;color:#bbb;margin-top:8px}
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+thead th{background:#2E75B6;color:#fff;padding:10px 13px;text-align:left;
+         font-size:11px;font-weight:700;text-transform:uppercase;
+         letter-spacing:.05em;white-space:nowrap}
+tbody tr{border-bottom:1px solid #eef2f7;cursor:pointer;transition:background .1s}
+tbody tr:hover{background:#eef6ff}
+tbody tr:last-child{border-bottom:none}
+td{padding:10px 13px;vertical-align:middle}
+.td-ref{font-weight:700;color:#1F4E79;white-space:nowrap}
+.td-loc{color:#ccc;font-style:italic;white-space:nowrap}
+.td-loc.set{color:#222;font-style:normal;font-weight:500}
+.td-qty{text-align:center;font-weight:700;white-space:nowrap}
+.td-qty.low{color:#c0392b}
+.td-c{text-align:center}
+.lnk{color:#2E75B6;font-size:12px;padding:2px 8px;border:1px solid #2E75B6;
+     border-radius:4px;white-space:nowrap;display:inline-block}
+.lnk:hover{background:#2E75B6;color:#fff}
+.empty{text-align:center;padding:52px 20px;color:#ccc;font-size:14px}
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;
+       font-size:11px;font-weight:600;white-space:nowrap}
+.Unions{background:#D6EAF8;color:#1A5276}
+.Reducers{background:#D5F5E3;color:#1E8449}
+.Male-Connectors{background:#FCF3CF;color:#7D6608}
+.Female-Connectors{background:#FDEBD0;color:#784212}
+.Port-Connectors{background:#E8DAEF;color:#6C3483}
+.Bulkheads{background:#FADBD8;color:#922B21}
+.Tube-Adapters{background:#D0ECE7;color:#1A5F4A}
+.Pipe-Fittings{background:#F2F3F4;color:#424949}
+.Unknown{background:#FFF2CC;color:#7D6608}
+
+/* ── Loading spinner ─────────────────────────────────────────────────────── */
+.loading{text-align:center;padding:52px 20px;color:#aaa;font-size:14px}
+.spinner{width:32px;height:32px;border:3px solid #ddd;border-top-color:#2E75B6;
+         border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Toast ───────────────────────────────────────────────────────────────── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+       background:#1F4E79;color:#fff;padding:10px 22px;border-radius:8px;
+       font-size:13px;font-weight:600;display:none;z-index:999;
+       box-shadow:0 3px 14px rgba(0,0,0,.22);white-space:nowrap}
+.toast.err{background:#c0392b}
+.toast.ok{background:#1E8449}
+
+@media(max-width:700px){
+  .hide-sm{display:none}
+  td,th{padding:8px 9px}
+  table{font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="hdr-logo">Swagelok Inventory</div>
+    <div class="hdr-sub">CARES Lab — tap any row to manage stock</div>
+  </div>
+  <div class="hdr-status" id="hdrStatus">Loading…</div>
+</div>
+
+<div class="container">
+
+  <div class="card filter-card">
+    <h2>Search &amp; Filter</h2>
+    <div class="fg-grid">
+      <div class="fg"><label>Category</label>
+        <select id="fCat">
+          <option value="">All categories</option>
+          <option>Unions</option><option>Reducers</option>
+          <option>Male Connectors</option><option>Female Connectors</option>
+          <option>Port Connectors</option><option>Bulkheads</option>
+          <option>Tube Adapters</option><option>Pipe Fittings</option>
+          <option>Unknown</option>
+        </select></div>
+      <div class="fg"><label>Material</label>
+        <select id="fMat">
+          <option value="">All materials</option>
+          <option>Brass</option><option>316 Stainless Steel</option>
+        </select></div>
+      <div class="fg"><label>Connections</label>
+        <select id="fConn">
+          <option value="">Any</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select></div>
+      <div class="fg"><label>Ref. Number</label>
+        <input id="fRef" type="text" placeholder="e.g. SS-400-6"></div>
+      <div class="fg"><label>Location</label>
+        <input id="fLoc" type="text" placeholder="e.g. Drawer A1"></div>
+      <div class="fg"><label>Description</label>
+        <input id="fDesc" type="text" placeholder="keyword…"></div>
+    </div>
+    <div class="filter-foot">
+      <button class="btn-clear" onclick="clearAll()">Clear filters</button>
+      <span class="rc" id="count"></span>
+    </div>
+    <p class="hint">Tap any row to open its stock management page</p>
+  </div>
+
+  <div class="card table-wrap" id="tableWrap">
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      Loading inventory from Google Sheets…
+    </div>
+    <table id="tbl" style="display:none">
+      <thead>
+        <tr>
+          <th>Ref.</th>
+          <th class="hide-sm">Location</th>
+          <th>Description</th>
+          <th class="hide-sm">Material</th>
+          <th class="hide-sm">Conn.</th>
+          <th>Category</th>
+          <th>Qty</th>
+          <th class="hide-sm">Datasheet</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">No items match your filters.</div>
+  </div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────────────────────
+// Replace with your deployed Apps Script URL after deploying Code.gs
+const API = 'https://script.google.com/macros/s/AKfycbz5vPNc0TZJMer3xkhZxanYpW7bUgBygdx8HGTufp9mW-b8hk1upzFkczYbHztka8_e/exec';
+const ITEM_BASE = 'https://v-laf.github.io/swagelok/item/';
+
+let DATA = [];
+
+// ── Load data from Apps Script ────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const r = await fetch(API);
+    DATA = await r.json();
+    if (!Array.isArray(DATA)) throw new Error('Invalid response');
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('tbl').style.display = 'table';
+    document.getElementById('hdrStatus').textContent = DATA.length + ' items loaded';
+    render();
+  } catch(e) {
+    document.getElementById('loading').innerHTML =
+      '<p style="color:#c0392b">Failed to load inventory. Check the API URL in index.html.</p>';
+    document.getElementById('hdrStatus').textContent = 'Load failed';
+  }
+}
+
+// ── Render table ──────────────────────────────────────────────────────────────
+function badgeCls(c){ return c.replace(/ /g,'-'); }
+
+function render() {
+  const cat  = document.getElementById('fCat').value;
+  const mat  = document.getElementById('fMat').value;
+  const conn = document.getElementById('fConn').value;
+  const ref  = document.getElementById('fRef').value.toLowerCase().trim();
+  const loc  = document.getElementById('fLoc').value.toLowerCase().trim();
+  const desc = document.getElementById('fDesc').value.toLowerCase().trim();
+
+  const f = DATA.filter(r =>
+    (!cat  || r.category === cat) &&
+    (!mat  || r.material === mat) &&
+    (!conn || String(r.noconn) === conn) &&
+    (!ref  || r.ref.toLowerCase().includes(ref)) &&
+    (!loc  || r.location.toLowerCase().includes(loc)) &&
+    (!desc || r.desc.toLowerCase().includes(desc))
+  );
+
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = '';
+  f.forEach(r => {
+    const tr    = document.createElement('tr');
+    const isLow = r.qty <= 2;
+    tr.onclick  = () => window.location.href = ITEM_BASE + encodeURIComponent(r.ref);
+    tr.innerHTML =
+      '<td class="td-ref">'  + r.ref + '</td>' +
+      '<td class="td-loc' + (r.location ? ' set' : '') + ' hide-sm">' + (r.location || '—') + '</td>' +
+      '<td>' + r.desc + '</td>' +
+      '<td class="hide-sm">' + r.material + '</td>' +
+      '<td class="td-c hide-sm">' + r.noconn + '</td>' +
+      '<td><span class="badge ' + badgeCls(r.category) + '">' + r.category + '</span></td>' +
+      '<td class="td-qty' + (isLow ? ' low' : '') + '">' + r.qty + (isLow ? ' ⚠' : '') + '</td>' +
+      '<td class="hide-sm">' + (r.link
+        ? '<a class="lnk" href="' + r.link + '" target="_blank" onclick="event.stopPropagation()">View ↗</a>'
+        : '—') + '</td>';
+    tb.appendChild(tr);
+  });
+
+  document.getElementById('count').textContent = f.length + ' of ' + DATA.length + ' items';
+  document.getElementById('empty').style.display = f.length ? 'none' : 'block';
+}
+
+function clearAll() {
+  ['fCat','fMat','fConn'].forEach(id => document.getElementById(id).value = '');
+  ['fRef','fLoc','fDesc'].forEach(id => document.getElementById(id).value = '');
+  render();
+}
+
+document.querySelectorAll('select,input').forEach(el => el.addEventListener('input', render));
+loadData();
+</script>
+</body>
+</html>

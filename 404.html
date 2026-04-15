@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script>
+// GitHub Pages SPA routing trick.
+// /swagelok/item/SS-400-6 → serves this 404 → redirects to item.html?ref=SS-400-6
+const path = window.location.pathname;
+const match = path.match(/\/item\/(.+)$/);
+if (match) {
+  const ref = match[1];
+  window.location.replace('/swagelok/item.html?ref=' + ref);
+} else {
+  window.location.replace('/swagelok/');
+}
+</script>
+</head>
+<body></body>
+</html>

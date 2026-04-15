@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Swagelok Item</title>
+<style>
+/* ── Reset & base ─────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;color:#222;min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.hdr{background:#1F4E79;color:#fff;padding:0 20px;display:flex;align-items:center;
+     justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;
+     box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hdr-logo{font-size:17px;font-weight:700}
+.hdr-sub{font-size:11px;opacity:.6;margin-top:1px}
+.hdr-back{background:rgba(255,255,255,.15);border:none;color:#fff;padding:7px 14px;
+          border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;
+          text-decoration:none;white-space:nowrap}
+.hdr-back:hover{background:rgba(255,255,255,.25)}
+
+/* ── Page ────────────────────────────────────────────────────────────────── */
+.page{max-width:480px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:14px}
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.09);overflow:hidden}
+
+/* ── Loading / error ─────────────────────────────────────────────────────── */
+.loading{text-align:center;padding:52px 20px;color:#aaa;font-size:14px}
+.spinner{width:32px;height:32px;border:3px solid #ddd;border-top-color:#2E75B6;
+         border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-page{text-align:center;padding:52px 20px}
+.error-page h2{font-size:18px;color:#1F4E79;margin-bottom:8px}
+.error-page p{font-size:13px;color:#888;margin-bottom:20px;line-height:1.5}
+.back-btn{display:inline-block;padding:10px 24px;background:#1F4E79;color:#fff;
+          border-radius:8px;font-size:14px;font-weight:600}
+
+/* ── Item header ─────────────────────────────────────────────────────────── */
+.item-hdr{padding:18px 20px}
+.item-ref{font-size:22px;font-weight:700;color:#1F4E79;letter-spacing:-.3px}
+.item-desc{font-size:13px;color:#555;margin-top:6px;line-height:1.5}
+.item-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
+.meta-tag{font-size:12px;color:#888}
+
+/* ── Badges ──────────────────────────────────────────────────────────────── */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;
+       font-size:11px;font-weight:600;white-space:nowrap}
+.Unions{background:#D6EAF8;color:#1A5276}
+.Reducers{background:#D5F5E3;color:#1E8449}
+.Male-Connectors{background:#FCF3CF;color:#7D6608}
+.Female-Connectors{background:#FDEBD0;color:#784212}
+.Port-Connectors{background:#E8DAEF;color:#6C3483}
+.Bulkheads{background:#FADBD8;color:#922B21}
+.Tube-Adapters{background:#D0ECE7;color:#1A5F4A}
+.Pipe-Fittings{background:#F2F3F4;color:#424949}
+.Unknown{background:#FFF2CC;color:#7D6608}
+
+/* ── Specs ───────────────────────────────────────────────────────────────── */
+.specs{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.spec-label{font-size:10px;font-weight:700;text-transform:uppercase;
+            letter-spacing:.06em;color:#aaa;margin-bottom:3px}
+.spec-value{font-size:13px;color:#222;font-weight:500}
+.spec-na{font-size:13px;color:#ccc;font-style:italic}
+
+/* ── Quantity ────────────────────────────────────────────────────────────── */
+.qty-card{padding:20px 20px 24px}
+.qty-title{font-size:11px;font-weight:700;text-transform:uppercase;
+           letter-spacing:.07em;color:#aaa;margin-bottom:16px}
+.qty-control{display:flex;align-items:center}
+.qty-btn{width:60px;height:60px;border:none;border-radius:10px;font-size:30px;
+         font-weight:700;cursor:pointer;display:flex;align-items:center;
+         justify-content:center;transition:all .1s;-webkit-tap-highlight-color:transparent;
+         flex-shrink:0}
+.qty-btn:active{transform:scale(.88)}
+.qty-minus{background:#FADBD8;color:#922B21}
+.qty-plus{background:#D5F5E3;color:#1E8449}
+.qty-wrap{position:relative;flex:1;display:flex;flex-direction:column;align-items:center}
+.qty-val{font-size:46px;font-weight:700;color:#1F4E79;line-height:1}
+.qty-spin{font-size:11px;color:#2E75B6;margin-top:4px;display:none;height:16px}
+
+/* ── Low stock ───────────────────────────────────────────────────────────── */
+.low-warn{background:#FFF3CD;border:1.5px solid #FFC107;border-radius:8px;
+          padding:10px 16px;font-size:12px;color:#856404;font-weight:600;
+          display:none;text-align:center}
+.low-warn.show{display:block}
+
+/* ── Actions ─────────────────────────────────────────────────────────────── */
+.actions{padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+.btn{width:100%;padding:15px;border:none;border-radius:8px;font-size:14px;
+     font-weight:700;cursor:pointer;text-align:center;transition:all .12s;
+     -webkit-tap-highlight-color:transparent;display:block}
+.btn:active{transform:scale(.98)}
+.btn-restock{background:#c0392b;color:#fff;border:2px solid transparent}
+.btn-restock:hover{background:#a93226}
+.btn-ds{background:#1F4E79;color:#fff}
+.btn-ds:hover{background:#163d61}
+
+/* ── Toast ───────────────────────────────────────────────────────────────── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+       background:#1F4E79;color:#fff;padding:10px 22px;border-radius:8px;
+       font-size:13px;font-weight:600;display:none;z-index:999;
+       box-shadow:0 3px 14px rgba(0,0,0,.22);white-space:nowrap;
+       max-width:90vw;text-align:center}
+.toast.err{background:#c0392b}
+.toast.ok{background:#1E8449}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="hdr-logo">Swagelok Inventory</div>
+    <div class="hdr-sub">CARES Lab</div>
+  </div>
+  <a href="https://v-laf.github.io/swagelok/" class="hdr-back">← All items</a>
+</div>
+
+<div class="page" id="page">
+  <div class="card loading" id="loading">
+    <div class="spinner"></div>
+    Loading item…
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────────────────────
+// Replace with your deployed Apps Script URL after deploying Code.gs
+const API = 'https://script.google.com/macros/s/AKfycbz5vPNc0TZJMer3xkhZxanYpW7bUgBygdx8HGTufp9mW-b8hk1upzFkczYbHztka8_e/exec';
+
+// ── Get ref from URL path ─────────────────────────────────────────────────────
+// URL: v-laf.github.io/swagelok/item/SS-400-6
+// GitHub Pages serves item.html for /item/* via 404.html redirect trick
+function getRefFromPath() {
+  // First check query param (set by 404.html redirect)
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('ref')) return decodeURIComponent(params.get('ref'));
+  // Then check URL path directly
+  const path = window.location.pathname;
+  const match = path.match(/\/item\/(.+)$/);
+  if (match) return decodeURIComponent(match[1]);
+  return '';
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type === 'err' ? ' err' : type === 'ok' ? ' ok' : '');
+  t.style.display = 'block';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.style.display = 'none', 3000);
+}
+
+// ── Quantity ──────────────────────────────────────────────────────────────────
+async function adjustQty(ref, delta, valEl, spinEl) {
+  spinEl.style.display = 'block';
+  try {
+    const r = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'adjustQty', ref, delta }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      valEl.textContent = d.qty;
+      showToast(delta > 0 ? '+1 saved — ' + d.qty + ' in stock' : '-1 saved — ' + d.qty + ' in stock', 'ok');
+      checkLow(d.qty);
+    } else {
+      showToast('Error: ' + (d.error || 'unknown'), 'err');
+    }
+  } catch(e) {
+    showToast('Network error — try again', 'err');
+  }
+  spinEl.style.display = 'none';
+}
+
+// ── Restock ───────────────────────────────────────────────────────────────────
+async function requestRestock(ref, desc, qty, location, link, btn) {
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  try {
+    const r = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'restock', ref, desc, qty, location, link }),
+    });
+    const d = await r.json();
+    btn.textContent = '✓ Restock request sent';
+    btn.style.background = '#D5F5E3';
+    btn.style.color = '#1E8449';
+    showToast('✓ Restock email sent', 'ok');
+  } catch(e) {
+    btn.disabled = false;
+    btn.textContent = '⚠  Request Restock by Email';
+    showToast('Network error — try again', 'err');
+  }
+}
+
+// ── Low stock check ───────────────────────────────────────────────────────────
+function checkLow(qty) {
+  const w = document.getElementById('lowWarn');
+  if (w) w.classList.toggle('show', (parseInt(qty) || 0) <= 2);
+}
+
+// ── Render item ───────────────────────────────────────────────────────────────
+function specVal(v) {
+  if (!v || v === 'N/A' || v === '') return '<span class="spec-na">—</span>';
+  return '<span class="spec-value">' + v + '</span>';
+}
+
+function renderItem(item) {
+  const page     = document.getElementById('page');
+  const badgeCls = item.category.replace(/ /g, '-');
+
+  page.innerHTML = `
+    <div class="card item-hdr">
+      <div class="item-ref">${item.ref}</div>
+      <div class="item-desc">${item.desc}</div>
+      <div class="item-meta">
+        <span class="badge ${badgeCls}">${item.category}</span>
+        ${item.location
+          ? '<span class="meta-tag">📍 ' + item.location + '</span>'
+          : '<span class="meta-tag" style="color:#f0ad4e">📍 No location set</span>'}
+        <span class="meta-tag">${item.material}</span>
+        <span class="meta-tag">${item.system}</span>
+      </div>
+    </div>
+
+    <div class="card specs">
+      <div>
+        <div class="spec-label">Connection 1</div>
+        ${specVal(item.conn1)}
+      </div>
+      <div>
+        <div class="spec-label">Connection 2</div>
+        ${specVal(item.conn2)}
+      </div>
+      <div>
+        <div class="spec-label">Connection 3</div>
+        ${specVal(item.conn3)}
+      </div>
+      <div>
+        <div class="spec-label">Connection 4</div>
+        ${specVal(item.conn4)}
+      </div>
+      <div>
+        <div class="spec-label">Type</div>
+        ${specVal(item.type)}
+      </div>
+      <div>
+        <div class="spec-label">No. of Connections</div>
+        ${specVal(item.noconn)}
+      </div>
+    </div>
+
+    <div class="low-warn" id="lowWarn">⚠️ Low stock — consider requesting a restock</div>
+
+    <div class="card qty-card">
+      <div class="qty-title">Stock Quantity</div>
+      <div class="qty-control">
+        <button class="qty-btn qty-minus" id="btnMinus" ontouchstart="">−</button>
+        <div class="qty-wrap">
+          <div class="qty-val" id="qtyVal">${item.qty}</div>
+          <div class="qty-spin" id="qtySpin">saving…</div>
+        </div>
+        <button class="qty-btn qty-plus" id="btnPlus" ontouchstart="">+</button>
+      </div>
+    </div>
+
+    <div class="card actions">
+      <button class="btn btn-restock" id="btnRestock" ontouchstart="">
+        ⚠️&nbsp; Request Restock by Email
+      </button>
+      ${item.link
+        ? '<a href="' + item.link + '" target="_blank" class="btn btn-ds">📄&nbsp; Swagelok Datasheet</a>'
+        : ''}
+    </div>
+  `;
+
+  // Wire up events
+  const qtyVal  = document.getElementById('qtyVal');
+  const qtySpin = document.getElementById('qtySpin');
+
+  document.getElementById('btnMinus').addEventListener('click', () =>
+    adjustQty(item.ref, -1, qtyVal, qtySpin));
+  document.getElementById('btnPlus').addEventListener('click', () =>
+    adjustQty(item.ref, +1, qtyVal, qtySpin));
+  document.getElementById('btnRestock').addEventListener('click', function() {
+    requestRestock(item.ref, item.desc, parseInt(qtyVal.textContent) || 0,
+                   item.location, item.link, this);
+  });
+
+  checkLow(item.qty);
+  document.title = item.ref + ' — Swagelok';
+}
+
+function renderError(ref) {
+  document.getElementById('page').innerHTML = `
+    <div class="card error-page">
+      <h2>Item not found</h2>
+      <p>No item with reference <strong>${ref}</strong> exists in the inventory.<br>
+      The NFC tag may need to be reprogrammed.</p>
+      <a href="https://v-laf.github.io/swagelok/" class="back-btn">← Back to inventory</a>
+    </div>
+  `;
+  document.title = 'Not found — Swagelok';
+}
+
+// ── Load ──────────────────────────────────────────────────────────────────────
+async function loadItem() {
+  const ref = getRefFromPath();
+  if (!ref) {
+    window.location.href = 'https://v-laf.github.io/swagelok/';
+    return;
+  }
+  try {
+    const r = await fetch(API + '?ref=' + encodeURIComponent(ref));
+    const d = await r.json();
+    if (d.error || !d.ref) {
+      renderError(ref);
+    } else {
+      renderItem(d);
+    }
+  } catch(e) {
+    document.getElementById('page').innerHTML =
+      '<div class="card loading"><p style="color:#c0392b">Failed to load item. Check network connection.</p></div>';
+  }
+}
+
+loadItem();
+</script>
+</body>
+</html>
