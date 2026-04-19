@@ -18,15 +18,33 @@ a{text-decoration:none;color:inherit}
 .hdr-status{font-size:11px;opacity:.7;text-align:right;white-space:nowrap}
 
 /* ── Macro buttons ── */
-.macro-bar{background:#163d61;padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px}
-.macro-btn{padding:8px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.65);
-           border:2px solid rgba(255,255,255,.15);background:transparent;
-           border-radius:24px;cursor:pointer;transition:all .15s;white-space:nowrap;
-           letter-spacing:.01em}
-.macro-btn:hover{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.08)}
-.macro-btn.active{background:#fff;color:#1F4E79;border-color:#fff;font-weight:700}
-.macro-btn .mc-count{font-size:10px;margin-left:5px;opacity:.65}
-.macro-btn.active .mc-count{opacity:.5}
+.macro-bar{background:#12304f;padding:18px 20px;display:flex;flex-wrap:wrap;gap:10px}
+
+.macro-btn{
+  padding:12px 22px;
+  font-size:14px;font-weight:700;
+  border:none;border-radius:10px;
+  cursor:pointer;transition:all .15s;
+  white-space:nowrap;letter-spacing:.01em;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  min-width:110px;
+  opacity:.65;
+  box-shadow:0 2px 6px rgba(0,0,0,.25);
+}
+.macro-btn:hover{opacity:.85;transform:translateY(-1px)}
+.macro-btn.active{opacity:1;transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.mc-label{font-size:14px;font-weight:700}
+.mc-count{font-size:11px;font-weight:600;opacity:.8}
+
+/* Per-category colours */
+.macro-btn[data-cat="Swagelok"]            {background:#1F6FBF;color:#fff}
+.macro-btn[data-cat="Optics"]              {background:#7B2FA8;color:#fff}
+.macro-btn[data-cat="Equipment"]           {background:#1A7F4B;color:#fff}
+.macro-btn[data-cat="Tools"]               {background:#B8410E;color:#fff}
+.macro-btn[data-cat="Cables and Connectors"]{background:#8B6914;color:#fff}
+.macro-btn[data-cat="Other"]               {background:#3D5A73;color:#fff}
+/* Fallback for unknown categories */
+.macro-btn                                 {background:#3D5A73;color:#fff}
 
 /* ── Layout ── */
 .container{max-width:1300px;margin:0 auto;padding:20px 16px}
@@ -34,11 +52,13 @@ a{text-decoration:none;color:inherit}
 
 /* ── Filters ── */
 .filter-card{padding:18px 20px;margin-bottom:18px}
-.filter-card h2{font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;
-                letter-spacing:.07em;margin-bottom:14px}
+.filter-label{font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;
+              letter-spacing:.07em;margin-bottom:14px}
 .fg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
-.fg label{display:block;font-size:10px;font-weight:700;color:#888;margin-bottom:3px;
+.fg{display:flex;flex-direction:column}
+.fg label{font-size:10px;font-weight:700;color:#888;margin-bottom:3px;
           text-transform:uppercase;letter-spacing:.05em}
+.fg.hidden{display:none}
 select,input{width:100%;padding:8px 10px;border:1.5px solid #ddd;border-radius:6px;
              font-size:13px;background:#fff;font-family:Arial,sans-serif}
 select:focus,input:focus{outline:none;border-color:#2E75B6}
@@ -63,7 +83,7 @@ tbody tr.non-unique:hover{background:transparent}
 tbody tr:last-child{border-bottom:none}
 td{padding:10px 13px;vertical-align:middle}
 .td-ref{font-weight:700;color:#1F4E79;white-space:nowrap}
-.td-ref.dimmed{color:#888}
+.td-ref.dimmed{color:#999}
 .td-loc{color:#ccc;font-style:italic;white-space:nowrap}
 .td-loc.set{color:#222;font-style:normal;font-weight:500}
 .td-qty{text-align:center;font-weight:700;white-space:nowrap}
@@ -77,21 +97,15 @@ td{padding:10px 13px;vertical-align:middle}
 
 /* ── Badges ── */
 .badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
-.Unions{background:#D6EAF8;color:#1A5276}
-.Reducers{background:#D5F5E3;color:#1E8449}
-.Male-Connectors{background:#FCF3CF;color:#7D6608}
-.Female-Connectors{background:#FDEBD0;color:#784212}
-.Port-Connectors{background:#E8DAEF;color:#6C3483}
-.Bulkheads{background:#FADBD8;color:#922B21}
-.Tube-Adapters{background:#D0ECE7;color:#1A5F4A}
-.Pipe-Fittings{background:#F2F3F4;color:#424949}
-.Spare-Parts{background:#EAF2FF;color:#1F4E79}
-.Unknown{background:#FFF2CC;color:#7D6608}
-.Tools{background:#F9EBEA;color:#922B21}
-.Optics{background:#F5EEF8;color:#6C3483}
-.Equipment{background:#EAFAF1;color:#1E8449}
-.Cables{background:#FEF9E7;color:#7D6608}
-.Other{background:#F2F3F4;color:#424949}
+.Unions{background:#D6EAF8;color:#1A5276}.Reducers{background:#D5F5E3;color:#1E8449}
+.Male-Connectors{background:#FCF3CF;color:#7D6608}.Female-Connectors{background:#FDEBD0;color:#784212}
+.Port-Connectors{background:#E8DAEF;color:#6C3483}.Bulkheads{background:#FADBD8;color:#922B21}
+.Tube-Adapters{background:#D0ECE7;color:#1A5F4A}.Pipe-Fittings{background:#F2F3F4;color:#424949}
+.Spare-Parts{background:#EAF2FF;color:#1F4E79}.Valves{background:#FDEDEC;color:#7B241C}
+.Filters{background:#E8F6F3;color:#0E6655}.Unknown{background:#FFF2CC;color:#7D6608}
+.Lens{background:#F5EEF8;color:#6C3483}.Mirror{background:#EAF2FF;color:#1A5276}
+.Camera{background:#EAFAF1;color:#1E8449}.Lamp{background:#FEF9E7;color:#7D6608}
+.Connector{background:#FADBD8;color:#922B21}.Cable{background:#F2F3F4;color:#424949}
 
 /* ── Loading ── */
 .loading{text-align:center;padding:52px 20px;color:#aaa;font-size:14px}
@@ -109,7 +123,8 @@ td{padding:10px 13px;vertical-align:middle}
   .hide-sm{display:none}
   td,th{padding:8px 9px}
   table{font-size:12px}
-  .macro-btn{padding:7px 14px;font-size:12px}
+  .macro-btn{padding:10px 14px;font-size:13px;min-width:80px}
+  .macro-bar{padding:12px 14px;gap:8px}
 }
 </style>
 </head>
@@ -123,63 +138,87 @@ td{padding:10px 13px;vertical-align:middle}
   <div class="hdr-status" id="hdrStatus">Loading…</div>
 </div>
 
-<!-- Macro category pill buttons -->
 <div class="macro-bar" id="macroBar"></div>
 
 <div class="container">
   <div class="card filter-card">
-    <h2>Search &amp; Filter</h2>
-    <div class="fg-grid">
-      <!-- Subcategory: repopulates based on active macro -->
-      <div class="fg"><label>Subcategory</label>
+    <div class="filter-label">Search &amp; Filter</div>
+    <div class="fg-grid" id="filterGrid">
+
+      <!-- Shared: Subcategory (all) -->
+      <div class="fg" id="fg-cat">
+        <label>Subcategory</label>
         <select id="fCat"><option value="">All subcategories</option></select>
       </div>
-      <div class="fg"><label>Material</label>
+
+      <!-- Swagelok only -->
+      <div class="fg hidden" id="fg-mat">
+        <label>Material</label>
         <select id="fMat">
           <option value="">All materials</option>
           <option>Brass</option>
           <option>316 Stainless Steel</option>
         </select>
       </div>
-      <div class="fg"><label>Connections</label>
+      <div class="fg hidden" id="fg-conn">
+        <label>Connections</label>
         <select id="fConn">
           <option value="">Any</option>
           <option value="1">1</option><option value="2">2</option>
           <option value="3">3</option><option value="4">4</option>
         </select>
       </div>
-      <div class="fg"><label>Ref. / Name</label>
+      <div class="fg hidden" id="fg-system">
+        <label>System</label>
+        <select id="fSystem">
+          <option value="">All</option>
+          <option>Imperial</option>
+          <option>Metric</option>
+        </select>
+      </div>
+
+      <!-- Optics only -->
+      <div class="fg hidden" id="fg-wavelength">
+        <label>Wavelength Range</label>
+        <input id="fWavelength" type="text" placeholder="e.g. 400-700">
+      </div>
+      <div class="fg hidden" id="fg-size">
+        <label>Size</label>
+        <input id="fSize" type="text" placeholder="e.g. 25 mm">
+      </div>
+
+      <!-- Cables only -->
+      <div class="fg hidden" id="fg-type">
+        <label>Type</label>
+        <select id="fType"><option value="">All types</option></select>
+      </div>
+
+      <!-- Shared: Ref, Location, Description -->
+      <div class="fg" id="fg-ref">
+        <label>Ref. / Name</label>
         <input id="fRef" type="text" placeholder="e.g. SS-400-6">
       </div>
-      <div class="fg"><label>Location</label>
+      <div class="fg" id="fg-loc">
+        <label>Location</label>
         <input id="fLoc" type="text" placeholder="e.g. K1">
       </div>
-      <div class="fg"><label>Description keyword</label>
+      <div class="fg" id="fg-desc">
+        <label>Description keyword</label>
         <input id="fDesc" type="text" placeholder="e.g. union, wrench…">
       </div>
+
     </div>
     <div class="filter-foot">
       <button class="btn-clear" onclick="clearFilters()">Clear filters</button>
       <span class="rc" id="count"></span>
     </div>
-    <p class="hint">Unique items: tap to manage stock &nbsp;·&nbsp; Non-unique items: location &amp; description only</p>
+    <p class="hint">Unique items: tap row to manage stock &nbsp;·&nbsp; Dimmed items: location &amp; description only</p>
   </div>
 
   <div class="card table-wrap">
     <div class="loading" id="loading"><div class="spinner"></div>Loading inventory…</div>
     <table id="tbl" style="display:none">
-      <thead>
-        <tr>
-          <th>Ref. / Name</th>
-          <th class="hide-sm">Location</th>
-          <th>Description</th>
-          <th class="hide-sm">Material</th>
-          <th class="hide-sm">Conn.</th>
-          <th>Subcategory</th>
-          <th>Qty</th>
-          <th class="hide-sm">Link</th>
-        </tr>
-      </thead>
+      <thead><tr id="thead-row"></tr></thead>
       <tbody id="tbody"></tbody>
     </table>
     <div class="empty" id="empty" style="display:none">No items match your filters.</div>
@@ -190,24 +229,80 @@ td{padding:10px 13px;vertical-align:middle}
 <script>
 const API       = 'https://script.google.com/macros/s/AKfycby_yfxZTk21_P4LX8YNYZuqSem8ZNkvzF2wtHjjlXqcCpYGDCda77kzosBvrrBQ_eP0/exec';
 const ITEM_BASE = 'https://v-laf.github.io/swagelok/item/';
-
-// Predefined macro category order (others appear alphabetically after)
 const MACRO_ORDER = ['Swagelok','Optics','Equipment','Tools','Cables and Connectors','Other'];
 
-let DATA      = [];
+// Per-category filter config:
+// Each entry lists which filter panel IDs are VISIBLE for that macro category
+const FILTER_CONFIG = {
+  'Swagelok':             ['fg-cat','fg-mat','fg-conn','fg-system','fg-ref','fg-loc','fg-desc'],
+  'Optics':               ['fg-cat','fg-wavelength','fg-size','fg-ref','fg-loc','fg-desc'],
+  'Equipment':            ['fg-cat','fg-ref','fg-loc','fg-desc'],
+  'Tools':                ['fg-ref','fg-loc','fg-desc'],
+  'Cables and Connectors':['fg-cat','fg-type','fg-ref','fg-loc','fg-desc'],
+  'Other':                ['fg-cat','fg-ref','fg-loc','fg-desc'],
+};
+
+// Table column config per macro category
+// Each entry: { id, label, getValue(row) }
+const COL_CONFIG = {
+  'Swagelok': [
+    { id:'ref',      label:'Ref.',        fn: r => r.ref },
+    { id:'loc',      label:'Location',    fn: r => r.location || '—', cls:'hide-sm' },
+    { id:'desc',     label:'Description', fn: r => r.desc },
+    { id:'material', label:'Material',    fn: r => r.material || '—', cls:'hide-sm' },
+    { id:'noconn',   label:'Conn.',       fn: r => r.noconn || '—',   cls:'hide-sm td-c' },
+    { id:'category', label:'Subcategory', fn: r => r.category || '—', badge:true },
+    { id:'qty',      label:'Qty',         fn: r => r.qty, qty:true },
+    { id:'link',     label:'Datasheet',   fn: r => r.link, link:true, cls:'hide-sm' },
+  ],
+  'Optics': [
+    { id:'ref',        label:'Ref.',          fn: r => r.ref },
+    { id:'loc',        label:'Location',      fn: r => r.location || '—', cls:'hide-sm' },
+    { id:'desc',       label:'Description',   fn: r => r.desc },
+    { id:'category',   label:'Type',          fn: r => r.category || '—', badge:true },
+    { id:'focaldist',  label:'Focal Dist.',   fn: r => r.focaldist || '—', cls:'hide-sm' },
+    { id:'size',       label:'Size',          fn: r => r.size || '—',      cls:'hide-sm' },
+    { id:'wavelength', label:'Wavelength',    fn: r => r.wavelength || '—',cls:'hide-sm' },
+    { id:'qty',        label:'Qty',           fn: r => r.qty, qty:true },
+    { id:'link',       label:'Link',          fn: r => r.link, link:true, cls:'hide-sm' },
+  ],
+  'Equipment': [
+    { id:'ref',      label:'Ref.',        fn: r => r.ref },
+    { id:'loc',      label:'Location',    fn: r => r.location || '—', cls:'hide-sm' },
+    { id:'desc',     label:'Description', fn: r => r.desc },
+    { id:'category', label:'Type',        fn: r => r.category || '—', badge:true },
+    { id:'qty',      label:'Qty',         fn: r => r.qty, qty:true },
+    { id:'link',     label:'Link',        fn: r => r.link, link:true, cls:'hide-sm' },
+  ],
+  'Tools': [
+    { id:'ref',  label:'Ref.',        fn: r => r.ref },
+    { id:'loc',  label:'Location',    fn: r => r.location || '—' },
+    { id:'desc', label:'Description', fn: r => r.desc },
+    { id:'qty',  label:'Qty',         fn: r => r.qty, qty:true },
+  ],
+  'Cables and Connectors': [
+    { id:'ref',      label:'Ref.',        fn: r => r.ref },
+    { id:'loc',      label:'Location',    fn: r => r.location || '—', cls:'hide-sm' },
+    { id:'desc',     label:'Description', fn: r => r.desc },
+    { id:'category', label:'Category',    fn: r => r.category || '—', badge:true },
+    { id:'type',     label:'Type',        fn: r => r.type || '—', cls:'hide-sm' },
+    { id:'qty',      label:'Qty',         fn: r => r.qty, qty:true },
+    { id:'link',     label:'Link',        fn: r => r.link, link:true, cls:'hide-sm' },
+  ],
+};
+COL_CONFIG['Other'] = COL_CONFIG['Equipment'];
+
+let DATA = [];
 let activeTab = '';
 
 // ── JSONP ──────────────────────────────────────────────────────────────────
 function jsonpFetch(url) {
   return new Promise((resolve, reject) => {
-    const cb     = 'cb_' + Math.random().toString(36).slice(2);
+    const cb = 'cb_' + Math.random().toString(36).slice(2);
     const script = document.createElement('script');
-    const timer  = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 10000);
-    function cleanup() {
-      clearTimeout(timer); delete window[cb];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-    window[cb]     = d => { cleanup(); resolve(d); };
+    const timer = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 10000);
+    function cleanup() { clearTimeout(timer); delete window[cb]; if (script.parentNode) script.parentNode.removeChild(script); }
+    window[cb] = d => { cleanup(); resolve(d); };
     script.onerror = () => { cleanup(); reject(new Error('Load error')); };
     script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb;
     document.head.appendChild(script);
@@ -216,20 +311,13 @@ function jsonpFetch(url) {
 
 // ── Macro buttons ──────────────────────────────────────────────────────────
 function buildMacroBar() {
-  // Count per macro category
   const counts = {};
-  DATA.forEach(r => {
-    const mc = r.macrocat || 'Swagelok';
-    counts[mc] = (counts[mc] || 0) + 1;
-  });
-
-  // Sort: predefined order first, then alphabetical for unknowns
+  DATA.forEach(r => { const mc = r.macrocat || 'Swagelok'; counts[mc] = (counts[mc] || 0) + 1; });
   const present = Object.keys(counts);
   const ordered = [
     ...MACRO_ORDER.filter(m => present.includes(m)),
     ...present.filter(m => !MACRO_ORDER.includes(m)).sort()
   ];
-
   if (!activeTab || !ordered.includes(activeTab)) activeTab = ordered[0];
 
   const bar = document.getElementById('macroBar');
@@ -237,30 +325,67 @@ function buildMacroBar() {
   ordered.forEach(mc => {
     const btn = document.createElement('button');
     btn.className = 'macro-btn' + (mc === activeTab ? ' active' : '');
-    btn.innerHTML = mc + ' <span class="mc-count">(' + counts[mc] + ')</span>';
-    btn.onclick = () => { activeTab = mc; buildMacroBar(); buildSubcategoryFilter(); render(); };
+    btn.setAttribute('data-cat', mc);
+    btn.innerHTML = '<span class="mc-label">' + mc + '</span><span class="mc-count">' + counts[mc] + ' items</span>';
+    btn.onclick = () => { activeTab = mc; buildMacroBar(); updateFilters(); render(); };
     bar.appendChild(btn);
   });
 }
 
-// ── Subcategory filter: repopulates for active macro ───────────────────────
+// ── Show/hide filters based on active macro ────────────────────────────────
+const ALL_FILTER_IDS = ['fg-cat','fg-mat','fg-conn','fg-system','fg-wavelength','fg-size','fg-type','fg-ref','fg-loc','fg-desc'];
+
+function updateFilters() {
+  const visible = FILTER_CONFIG[activeTab] || ['fg-cat','fg-ref','fg-loc','fg-desc'];
+
+  // Show/hide each filter panel
+  ALL_FILTER_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('hidden', !visible.includes(id));
+  });
+
+  // Repopulate subcategory dropdown
+  buildSubcategoryFilter();
+
+  // Repopulate type dropdown (Cables)
+  buildTypeFilter();
+
+  // Update table headers
+  buildTableHeaders();
+
+  // Clear filter values when switching
+  clearFilterValues();
+}
+
 function buildSubcategoryFilter() {
   const cats = [...new Set(
-    DATA
-      .filter(r => (r.macrocat || 'Swagelok') === activeTab)
-      .map(r => r.category)
-      .filter(Boolean)
+    DATA.filter(r => (r.macrocat || 'Swagelok') === activeTab)
+        .map(r => r.category).filter(Boolean)
   )].sort();
-
   const sel = document.getElementById('fCat');
-  const current = sel.value;
   sel.innerHTML = '<option value="">All subcategories</option>';
-  cats.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c;
-    opt.textContent = c;
-    if (c === current) opt.selected = true;
-    sel.appendChild(opt);
+  cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel.appendChild(o); });
+}
+
+function buildTypeFilter() {
+  const types = [...new Set(
+    DATA.filter(r => (r.macrocat || 'Swagelok') === activeTab)
+        .map(r => r.type).filter(Boolean)
+  )].sort();
+  const sel = document.getElementById('fType');
+  sel.innerHTML = '<option value="">All types</option>';
+  types.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; sel.appendChild(o); });
+}
+
+function buildTableHeaders() {
+  const cols = COL_CONFIG[activeTab] || COL_CONFIG['Equipment'];
+  const tr = document.getElementById('thead-row');
+  tr.innerHTML = '';
+  cols.forEach(c => {
+    const th = document.createElement('th');
+    th.textContent = c.label;
+    if (c.cls) c.cls.split(' ').forEach(cl => { if(cl) th.classList.add(cl); });
+    tr.appendChild(th);
   });
 }
 
@@ -268,60 +393,71 @@ function buildSubcategoryFilter() {
 function badgeCls(c) { return (c || '').replace(/ /g, '-'); }
 
 function render() {
-  const cat  = document.getElementById('fCat').value;
-  const mat  = document.getElementById('fMat').value;
-  const conn = document.getElementById('fConn').value;
-  const ref  = document.getElementById('fRef').value.toLowerCase().trim();
-  const loc  = document.getElementById('fLoc').value.toLowerCase().trim();
-  const desc = document.getElementById('fDesc').value.toLowerCase().trim();
+  const cat        = document.getElementById('fCat').value;
+  const mat        = document.getElementById('fMat').value;
+  const conn       = document.getElementById('fConn').value;
+  const system     = document.getElementById('fSystem').value;
+  const wavelength = document.getElementById('fWavelength').value.toLowerCase().trim();
+  const size       = document.getElementById('fSize').value.toLowerCase().trim();
+  const type       = document.getElementById('fType').value;
+  const ref        = document.getElementById('fRef').value.toLowerCase().trim();
+  const loc        = document.getElementById('fLoc').value.toLowerCase().trim();
+  const desc       = document.getElementById('fDesc').value.toLowerCase().trim();
 
   const f = DATA.filter(r =>
     (r.macrocat || 'Swagelok') === activeTab &&
-    (!cat  || r.category === cat) &&
-    (!mat  || r.material === mat) &&
-    (!conn || String(r.noconn) === conn) &&
-    (!ref  || r.ref.toLowerCase().includes(ref)) &&
-    (!loc  || (r.location || '').toLowerCase().includes(loc)) &&
-    (!desc || r.desc.toLowerCase().includes(desc))
+    (!cat        || r.category === cat) &&
+    (!mat        || r.material === mat) &&
+    (!conn       || String(r.noconn) === conn) &&
+    (!system     || r.system === system) &&
+    (!wavelength || (r.wavelength || '').toLowerCase().includes(wavelength)) &&
+    (!size       || (r.size || '').toLowerCase().includes(size)) &&
+    (!type       || r.type === type) &&
+    (!ref        || r.ref.toLowerCase().includes(ref)) &&
+    (!loc        || (r.location || '').toLowerCase().includes(loc)) &&
+    (!desc       || r.desc.toLowerCase().includes(desc))
   );
 
-  const tb = document.getElementById('tbody');
+  const cols = COL_CONFIG[activeTab] || COL_CONFIG['Equipment'];
+  const tb   = document.getElementById('tbody');
   tb.innerHTML = '';
 
   f.forEach(r => {
     const isUnique = (r.uniqueitem || 'Yes').toLowerCase() !== 'no';
-    const isLow    = Number(r.qty) <= 2;
+    const isLow    = Number(r.qty) <= 2 && Number(r.qty) >= 0;
     const tr       = document.createElement('tr');
+    tr.className   = isUnique ? 'clickable' : 'non-unique';
+    if (isUnique) tr.onclick = () => window.location.href = ITEM_BASE + encodeURIComponent(r.ref);
 
-    tr.className = isUnique ? 'clickable' : 'non-unique';
-    if (isUnique) {
-      tr.onclick = () => window.location.href = ITEM_BASE + encodeURIComponent(r.ref);
-    }
+    cols.forEach(c => {
+      const td  = document.createElement('td');
+      const val = c.fn(r);
+      if (c.cls) c.cls.split(' ').forEach(cl => { if(cl) td.classList.add(cl); });
 
-    const refCell = isUnique
-      ? '<td class="td-ref">' + r.ref + '</td>'
-      : '<td class="td-ref dimmed">' + r.ref + '</td>';
-
-    const linkCell = isUnique
-      ? (r.link
-          ? '<a class="lnk" href="' + r.link + '" target="_blank" onclick="event.stopPropagation()">View ↗</a>'
-          : '—')
-      : '<span class="no-link-tag">no page</span>';
-
-    const qtyCell = r.qty !== undefined && r.qty !== ''
-      ? r.qty + (isLow && isUnique ? ' ⚠' : '')
-      : '—';
-
-    tr.innerHTML =
-      refCell +
-      '<td class="td-loc' + (r.location ? ' set' : '') + ' hide-sm">' + (r.location || '—') + '</td>' +
-      '<td>' + r.desc + '</td>' +
-      '<td class="hide-sm">' + (r.material || '—') + '</td>' +
-      '<td class="td-c hide-sm">' + (r.noconn || '—') + '</td>' +
-      '<td><span class="badge ' + badgeCls(r.category) + '">' + (r.category || '—') + '</span></td>' +
-      '<td class="td-qty' + (isLow && isUnique ? ' low' : '') + '">' + qtyCell + '</td>' +
-      '<td class="hide-sm">' + linkCell + '</td>';
-
+      if (c.id === 'ref') {
+        td.className = isUnique ? 'td-ref' : 'td-ref dimmed';
+        td.textContent = val;
+      } else if (c.id === 'loc') {
+        td.className = 'td-loc' + (r.location ? ' set' : '');
+        td.textContent = val;
+      } else if (c.qty) {
+        td.className = 'td-qty' + (isLow && isUnique ? ' low' : '');
+        td.textContent = val + (isLow && isUnique ? ' ⚠' : '');
+      } else if (c.badge) {
+        td.innerHTML = '<span class="badge ' + badgeCls(val) + '">' + val + '</span>';
+      } else if (c.link) {
+        if (!isUnique) {
+          td.innerHTML = '<span class="no-link-tag">no page</span>';
+        } else if (val && val !== 'N/A') {
+          td.innerHTML = '<a class="lnk" href="' + val + '" target="_blank" onclick="event.stopPropagation()">View ↗</a>';
+        } else {
+          td.textContent = '—';
+        }
+      } else {
+        td.textContent = val;
+      }
+      tr.appendChild(td);
+    });
     tb.appendChild(tr);
   });
 
@@ -330,9 +466,19 @@ function render() {
   document.getElementById('empty').style.display = f.length ? 'none' : 'block';
 }
 
+function clearFilterValues() {
+  ['fCat','fMat','fConn','fSystem','fType'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['fRef','fLoc','fDesc','fWavelength','fSize'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+}
+
 function clearFilters() {
-  ['fCat','fMat','fConn'].forEach(id => document.getElementById(id).value = '');
-  ['fRef','fLoc','fDesc'].forEach(id => document.getElementById(id).value = '');
+  clearFilterValues();
   render();
 }
 
@@ -345,11 +491,11 @@ async function loadData() {
     document.getElementById('tbl').style.display = 'table';
     document.getElementById('hdrStatus').textContent = DATA.length + ' items';
     buildMacroBar();
-    buildSubcategoryFilter();
+    updateFilters();
     render();
   } catch(e) {
     document.getElementById('loading').innerHTML =
-      '<p style="color:#c0392b;padding:20px">Failed to load — check API URL in index.html</p>';
+      '<p style="color:#c0392b;padding:20px">Failed to load — check API URL</p>';
     document.getElementById('hdrStatus').textContent = 'Load failed';
   }
 }
@@ -359,4 +505,3 @@ loadData();
 </script>
 </body>
 </html>
-
