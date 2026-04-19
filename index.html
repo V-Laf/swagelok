@@ -188,7 +188,368 @@ td{padding:10px 13px;vertical-align:middle}
 <div class="toast" id="toast"></div>
 
 <script>
+const API       = '<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab Inventory — CARES Lab</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;color:#222;min-height:100vh}
+a{text-decoration:none;color:inherit}
+
+/* ── Header ── */
+.hdr{background:#1F4E79;color:#fff;padding:0 20px;display:flex;align-items:center;
+     justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;
+     box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.hdr-logo{font-size:17px;font-weight:700}
+.hdr-sub{font-size:11px;opacity:.6;margin-top:1px}
+.hdr-status{font-size:11px;opacity:.7;text-align:right;white-space:nowrap}
+
+/* ── Macro buttons ── */
+.macro-bar{background:#163d61;padding:14px 20px;display:flex;flex-wrap:wrap;gap:8px}
+.macro-btn{padding:8px 18px;font-size:13px;font-weight:600;color:rgba(255,255,255,.65);
+           border:2px solid rgba(255,255,255,.15);background:transparent;
+           border-radius:24px;cursor:pointer;transition:all .15s;white-space:nowrap;
+           letter-spacing:.01em}
+.macro-btn:hover{color:#fff;border-color:rgba(255,255,255,.45);background:rgba(255,255,255,.08)}
+.macro-btn.active{background:#fff;color:#1F4E79;border-color:#fff;font-weight:700}
+.macro-btn .mc-count{font-size:10px;margin-left:5px;opacity:.65}
+.macro-btn.active .mc-count{opacity:.5}
+
+/* ── Layout ── */
+.container{max-width:1300px;margin:0 auto;padding:20px 16px}
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.09);overflow:hidden}
+
+/* ── Filters ── */
+.filter-card{padding:18px 20px;margin-bottom:18px}
+.filter-card h2{font-size:11px;font-weight:700;color:#1F4E79;text-transform:uppercase;
+                letter-spacing:.07em;margin-bottom:14px}
+.fg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.fg label{display:block;font-size:10px;font-weight:700;color:#888;margin-bottom:3px;
+          text-transform:uppercase;letter-spacing:.05em}
+select,input{width:100%;padding:8px 10px;border:1.5px solid #ddd;border-radius:6px;
+             font-size:13px;background:#fff;font-family:Arial,sans-serif}
+select:focus,input:focus{outline:none;border-color:#2E75B6}
+.filter-foot{margin-top:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.btn-clear{padding:7px 16px;background:#e8f0fe;color:#1F4E79;border:none;border-radius:6px;
+           font-size:13px;font-weight:600;cursor:pointer}
+.btn-clear:hover{background:#cce0fb}
+.rc{font-size:13px;color:#aaa}
+.hint{font-size:11px;color:#bbb;margin-top:8px}
+
+/* ── Table ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:600px}
+thead th{background:#2E75B6;color:#fff;padding:10px 13px;text-align:left;
+         font-size:11px;font-weight:700;text-transform:uppercase;
+         letter-spacing:.05em;white-space:nowrap}
+tbody tr{border-bottom:1px solid #eef2f7;transition:background .1s}
+tbody tr.clickable{cursor:pointer}
+tbody tr.clickable:hover{background:#eef6ff}
+tbody tr.non-unique{cursor:default;opacity:.7}
+tbody tr.non-unique:hover{background:transparent}
+tbody tr:last-child{border-bottom:none}
+td{padding:10px 13px;vertical-align:middle}
+.td-ref{font-weight:700;color:#1F4E79;white-space:nowrap}
+.td-ref.dimmed{color:#888}
+.td-loc{color:#ccc;font-style:italic;white-space:nowrap}
+.td-loc.set{color:#222;font-style:normal;font-weight:500}
+.td-qty{text-align:center;font-weight:700;white-space:nowrap}
+.td-qty.low{color:#c0392b}
+.td-c{text-align:center}
+.lnk{color:#2E75B6;font-size:12px;padding:2px 8px;border:1px solid #2E75B6;
+     border-radius:4px;white-space:nowrap;display:inline-block}
+.lnk:hover{background:#2E75B6;color:#fff}
+.no-link-tag{font-size:11px;color:#aaa;font-style:italic}
+.empty{text-align:center;padding:52px 20px;color:#ccc;font-size:14px}
+
+/* ── Badges ── */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.Unions{background:#D6EAF8;color:#1A5276}
+.Reducers{background:#D5F5E3;color:#1E8449}
+.Male-Connectors{background:#FCF3CF;color:#7D6608}
+.Female-Connectors{background:#FDEBD0;color:#784212}
+.Port-Connectors{background:#E8DAEF;color:#6C3483}
+.Bulkheads{background:#FADBD8;color:#922B21}
+.Tube-Adapters{background:#D0ECE7;color:#1A5F4A}
+.Pipe-Fittings{background:#F2F3F4;color:#424949}
+.Spare-Parts{background:#EAF2FF;color:#1F4E79}
+.Unknown{background:#FFF2CC;color:#7D6608}
+.Tools{background:#F9EBEA;color:#922B21}
+.Optics{background:#F5EEF8;color:#6C3483}
+.Equipment{background:#EAFAF1;color:#1E8449}
+.Cables{background:#FEF9E7;color:#7D6608}
+.Other{background:#F2F3F4;color:#424949}
+
+/* ── Loading ── */
+.loading{text-align:center;padding:52px 20px;color:#aaa;font-size:14px}
+.spinner{width:32px;height:32px;border:3px solid #ddd;border-top-color:#2E75B6;
+         border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+       background:#1F4E79;color:#fff;padding:10px 22px;border-radius:8px;
+       font-size:13px;font-weight:600;display:none;z-index:999;
+       box-shadow:0 3px 14px rgba(0,0,0,.22);white-space:nowrap}
+
+@media(max-width:700px){
+  .hide-sm{display:none}
+  td,th{padding:8px 9px}
+  table{font-size:12px}
+  .macro-btn{padding:7px 14px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <div class="hdr-logo">Lab Inventory</div>
+    <div class="hdr-sub">CARES Lab</div>
+  </div>
+  <div class="hdr-status" id="hdrStatus">Loading…</div>
+</div>
+
+<!-- Macro category pill buttons -->
+<div class="macro-bar" id="macroBar"></div>
+
+<div class="container">
+  <div class="card filter-card">
+    <h2>Search &amp; Filter</h2>
+    <div class="fg-grid">
+      <!-- Subcategory: repopulates based on active macro -->
+      <div class="fg"><label>Subcategory</label>
+        <select id="fCat"><option value="">All subcategories</option></select>
+      </div>
+      <div class="fg"><label>Material</label>
+        <select id="fMat">
+          <option value="">All materials</option>
+          <option>Brass</option>
+          <option>316 Stainless Steel</option>
+        </select>
+      </div>
+      <div class="fg"><label>Connections</label>
+        <select id="fConn">
+          <option value="">Any</option>
+          <option value="1">1</option><option value="2">2</option>
+          <option value="3">3</option><option value="4">4</option>
+        </select>
+      </div>
+      <div class="fg"><label>Ref. / Name</label>
+        <input id="fRef" type="text" placeholder="e.g. SS-400-6">
+      </div>
+      <div class="fg"><label>Location</label>
+        <input id="fLoc" type="text" placeholder="e.g. K1">
+      </div>
+      <div class="fg"><label>Description keyword</label>
+        <input id="fDesc" type="text" placeholder="e.g. union, wrench…">
+      </div>
+    </div>
+    <div class="filter-foot">
+      <button class="btn-clear" onclick="clearFilters()">Clear filters</button>
+      <span class="rc" id="count"></span>
+    </div>
+    <p class="hint">Unique items: tap to manage stock &nbsp;·&nbsp; Non-unique items: location &amp; description only</p>
+  </div>
+
+  <div class="card table-wrap">
+    <div class="loading" id="loading"><div class="spinner"></div>Loading inventory…</div>
+    <table id="tbl" style="display:none">
+      <thead>
+        <tr>
+          <th>Ref. / Name</th>
+          <th class="hide-sm">Location</th>
+          <th>Description</th>
+          <th class="hide-sm">Material</th>
+          <th class="hide-sm">Conn.</th>
+          <th>Subcategory</th>
+          <th>Qty</th>
+          <th class="hide-sm">Link</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">No items match your filters.</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
 const API       = 'https://script.google.com/macros/s/AKfycbxupmvAl7tigYFWtimN9l3urMseMw8b36fQxheFI-tTAbdfIT34rSYe3hJJjQND2uo/exec';
+const ITEM_BASE = 'https://v-laf.github.io/swagelok/item/';
+
+// Predefined macro category order (others appear alphabetically after)
+const MACRO_ORDER = ['Swagelok','Optics','Equipment','Tools','Cables','Other'];
+
+let DATA      = [];
+let activeTab = '';
+
+// ── JSONP ──────────────────────────────────────────────────────────────────
+function jsonpFetch(url) {
+  return new Promise((resolve, reject) => {
+    const cb     = 'cb_' + Math.random().toString(36).slice(2);
+    const script = document.createElement('script');
+    const timer  = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 10000);
+    function cleanup() {
+      clearTimeout(timer); delete window[cb];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+    window[cb]     = d => { cleanup(); resolve(d); };
+    script.onerror = () => { cleanup(); reject(new Error('Load error')); };
+    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb;
+    document.head.appendChild(script);
+  });
+}
+
+// ── Macro buttons ──────────────────────────────────────────────────────────
+function buildMacroBar() {
+  // Count per macro category
+  const counts = {};
+  DATA.forEach(r => {
+    const mc = r.macrocat || 'Swagelok';
+    counts[mc] = (counts[mc] || 0) + 1;
+  });
+
+  // Sort: predefined order first, then alphabetical for unknowns
+  const present = Object.keys(counts);
+  const ordered = [
+    ...MACRO_ORDER.filter(m => present.includes(m)),
+    ...present.filter(m => !MACRO_ORDER.includes(m)).sort()
+  ];
+
+  if (!activeTab || !ordered.includes(activeTab)) activeTab = ordered[0];
+
+  const bar = document.getElementById('macroBar');
+  bar.innerHTML = '';
+  ordered.forEach(mc => {
+    const btn = document.createElement('button');
+    btn.className = 'macro-btn' + (mc === activeTab ? ' active' : '');
+    btn.innerHTML = mc + '<span class="mc-count">(' + counts[mc] + ')</span>';
+    btn.onclick = () => { activeTab = mc; buildMacroBar(); buildSubcategoryFilter(); render(); };
+    bar.appendChild(btn);
+  });
+}
+
+// ── Subcategory filter: repopulates for active macro ───────────────────────
+function buildSubcategoryFilter() {
+  const cats = [...new Set(
+    DATA
+      .filter(r => (r.macrocat || 'Swagelok') === activeTab)
+      .map(r => r.category)
+      .filter(Boolean)
+  )].sort();
+
+  const sel = document.getElementById('fCat');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">All subcategories</option>';
+  cats.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = c;
+    if (c === current) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+// ── Table render ───────────────────────────────────────────────────────────
+function badgeCls(c) { return (c || '').replace(/ /g, '-'); }
+
+function render() {
+  const cat  = document.getElementById('fCat').value;
+  const mat  = document.getElementById('fMat').value;
+  const conn = document.getElementById('fConn').value;
+  const ref  = document.getElementById('fRef').value.toLowerCase().trim();
+  const loc  = document.getElementById('fLoc').value.toLowerCase().trim();
+  const desc = document.getElementById('fDesc').value.toLowerCase().trim();
+
+  const f = DATA.filter(r =>
+    (r.macrocat || 'Swagelok') === activeTab &&
+    (!cat  || r.category === cat) &&
+    (!mat  || r.material === mat) &&
+    (!conn || String(r.noconn) === conn) &&
+    (!ref  || r.ref.toLowerCase().includes(ref)) &&
+    (!loc  || (r.location || '').toLowerCase().includes(loc)) &&
+    (!desc || r.desc.toLowerCase().includes(desc))
+  );
+
+  const tb = document.getElementById('tbody');
+  tb.innerHTML = '';
+
+  f.forEach(r => {
+    const isUnique = (r.uniqueitem || 'Yes').toLowerCase() !== 'no';
+    const isLow    = Number(r.qty) <= 2;
+    const tr       = document.createElement('tr');
+
+    tr.className = isUnique ? 'clickable' : 'non-unique';
+    if (isUnique) {
+      tr.onclick = () => window.location.href = ITEM_BASE + encodeURIComponent(r.ref);
+    }
+
+    const refCell = isUnique
+      ? '<td class="td-ref">' + r.ref + '</td>'
+      : '<td class="td-ref dimmed">' + r.ref + '</td>';
+
+    const linkCell = isUnique
+      ? (r.link
+          ? '<a class="lnk" href="' + r.link + '" target="_blank" onclick="event.stopPropagation()">View ↗</a>'
+          : '—')
+      : '<span class="no-link-tag">no page</span>';
+
+    const qtyCell = r.qty !== undefined && r.qty !== ''
+      ? r.qty + (isLow && isUnique ? ' ⚠' : '')
+      : '—';
+
+    tr.innerHTML =
+      refCell +
+      '<td class="td-loc' + (r.location ? ' set' : '') + ' hide-sm">' + (r.location || '—') + '</td>' +
+      '<td>' + r.desc + '</td>' +
+      '<td class="hide-sm">' + (r.material || '—') + '</td>' +
+      '<td class="td-c hide-sm">' + (r.noconn || '—') + '</td>' +
+      '<td><span class="badge ' + badgeCls(r.category) + '">' + (r.category || '—') + '</span></td>' +
+      '<td class="td-qty' + (isLow && isUnique ? ' low' : '') + '">' + qtyCell + '</td>' +
+      '<td class="hide-sm">' + linkCell + '</td>';
+
+    tb.appendChild(tr);
+  });
+
+  const total = DATA.filter(r => (r.macrocat || 'Swagelok') === activeTab).length;
+  document.getElementById('count').textContent = f.length + ' of ' + total + ' items';
+  document.getElementById('empty').style.display = f.length ? 'none' : 'block';
+}
+
+function clearFilters() {
+  ['fCat','fMat','fConn'].forEach(id => document.getElementById(id).value = '');
+  ['fRef','fLoc','fDesc'].forEach(id => document.getElementById(id).value = '');
+  render();
+}
+
+// ── Load ───────────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    DATA = await jsonpFetch(API);
+    if (!Array.isArray(DATA)) throw new Error('Bad response');
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('tbl').style.display = 'table';
+    document.getElementById('hdrStatus').textContent = DATA.length + ' items';
+    buildMacroBar();
+    buildSubcategoryFilter();
+    render();
+  } catch(e) {
+    document.getElementById('loading').innerHTML =
+      '<p style="color:#c0392b;padding:20px">Failed to load — check API URL in index.html</p>';
+    document.getElementById('hdrStatus').textContent = 'Load failed';
+  }
+}
+
+document.querySelectorAll('select,input').forEach(el => el.addEventListener('input', render));
+loadData();
+</script>
+</body>
+</html>
+';
 const ITEM_BASE = 'https://v-laf.github.io/swagelok/item/';
 
 // Predefined macro category order (others appear alphabetically after)
