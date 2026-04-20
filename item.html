@@ -3,14 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Swagelok Item</title>
+<title>Item — Lab Inventory</title>
 <style>
-/* ── Reset & base ─────────────────────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f0f4f8;color:#222;min-height:100vh}
 a{text-decoration:none;color:inherit}
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
 .hdr{background:#1F4E79;color:#fff;padding:0 20px;display:flex;align-items:center;
      justify-content:space-between;height:56px;position:sticky;top:0;z-index:100;
      box-shadow:0 2px 8px rgba(0,0,0,.2)}
@@ -21,11 +19,10 @@ a{text-decoration:none;color:inherit}
           text-decoration:none;white-space:nowrap}
 .hdr-back:hover{background:rgba(255,255,255,.25)}
 
-/* ── Page ────────────────────────────────────────────────────────────────── */
 .page{max-width:480px;margin:0 auto;padding:16px;display:flex;flex-direction:column;gap:14px}
 .card{background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.09);overflow:hidden}
 
-/* ── Loading / error ─────────────────────────────────────────────────────── */
+/* ── Loading / error ── */
 .loading{text-align:center;padding:52px 20px;color:#aaa;font-size:14px}
 .spinner{width:32px;height:32px;border:3px solid #ddd;border-top-color:#2E75B6;
          border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
@@ -36,42 +33,48 @@ a{text-decoration:none;color:inherit}
 .back-btn{display:inline-block;padding:10px 24px;background:#1F4E79;color:#fff;
           border-radius:8px;font-size:14px;font-weight:600}
 
-/* ── Item header ─────────────────────────────────────────────────────────── */
+/* ── Item header ── */
 .item-hdr{padding:18px 20px}
 .item-ref{font-size:22px;font-weight:700;color:#1F4E79;letter-spacing:-.3px}
 .item-desc{font-size:13px;color:#555;margin-top:6px;line-height:1.5}
 .item-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;align-items:center}
 .meta-tag{font-size:12px;color:#888}
+.macro-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;color:#fff}
+.macro-Swagelok{background:#1F4E79}
+.macro-Optics{background:#6C3483}
+.macro-Equipment{background:#1E8449}
+.macro-Tools{background:#922B21}
+.macro-Cables{background:#7D6608}
 
-/* ── Badges ──────────────────────────────────────────────────────────────── */
-.badge{display:inline-block;padding:2px 9px;border-radius:20px;
-       font-size:11px;font-weight:600;white-space:nowrap}
-.Unions{background:#D6EAF8;color:#1A5276}
-.Reducers{background:#D5F5E3;color:#1E8449}
-.Male-Connectors{background:#FCF3CF;color:#7D6608}
-.Female-Connectors{background:#FDEBD0;color:#784212}
-.Port-Connectors{background:#E8DAEF;color:#6C3483}
-.Bulkheads{background:#FADBD8;color:#922B21}
-.Tube-Adapters{background:#D0ECE7;color:#1A5F4A}
-.Pipe-Fittings{background:#F2F3F4;color:#424949}
-.Unknown{background:#FFF2CC;color:#7D6608}
-
-/* ── Specs ───────────────────────────────────────────────────────────────── */
+/* ── Specs grid ── */
 .specs{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .spec-label{font-size:10px;font-weight:700;text-transform:uppercase;
             letter-spacing:.06em;color:#aaa;margin-bottom:3px}
 .spec-value{font-size:13px;color:#222;font-weight:500}
 .spec-na{font-size:13px;color:#ccc;font-style:italic}
+.specs-single{padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.spec-row{display:flex;gap:12px;align-items:baseline}
+.spec-row .spec-label{min-width:110px;margin-bottom:0}
 
-/* ── Quantity ────────────────────────────────────────────────────────────── */
+/* ── Badges ── */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.Unions{background:#D6EAF8;color:#1A5276}.Reducers{background:#D5F5E3;color:#1E8449}
+.Male-Connectors{background:#FCF3CF;color:#7D6608}.Female-Connectors{background:#FDEBD0;color:#784212}
+.Port-Connectors{background:#E8DAEF;color:#6C3483}.Bulkheads{background:#FADBD8;color:#922B21}
+.Tube-Adapters{background:#D0ECE7;color:#1A5F4A}.Pipe-Fittings{background:#F2F3F4;color:#424949}
+.Spare-Parts{background:#EAF2FF;color:#1F4E79}.Lens{background:#F5EEF8;color:#6C3483}
+.Mirror{background:#EAF2FF;color:#1A5276}.Camera{background:#EAFAF1;color:#1E8449}
+.Lamp{background:#FEF9E7;color:#7D6608}.Connector{background:#FADBD8;color:#922B21}
+.Cable{background:#F2F3F4;color:#424949}
+
+/* ── Quantity ── */
 .qty-card{padding:20px 20px 24px}
 .qty-title{font-size:11px;font-weight:700;text-transform:uppercase;
            letter-spacing:.07em;color:#aaa;margin-bottom:16px}
 .qty-control{display:flex;align-items:center}
 .qty-btn{width:60px;height:60px;border:none;border-radius:10px;font-size:30px;
          font-weight:700;cursor:pointer;display:flex;align-items:center;
-         justify-content:center;transition:all .1s;-webkit-tap-highlight-color:transparent;
-         flex-shrink:0}
+         justify-content:center;transition:all .1s;-webkit-tap-highlight-color:transparent;flex-shrink:0}
 .qty-btn:active{transform:scale(.88)}
 .qty-minus{background:#FADBD8;color:#922B21}
 .qty-plus{background:#D5F5E3;color:#1E8449}
@@ -79,41 +82,43 @@ a{text-decoration:none;color:inherit}
 .qty-val{font-size:46px;font-weight:700;color:#1F4E79;line-height:1}
 .qty-spin{font-size:11px;color:#2E75B6;margin-top:4px;display:none;height:16px}
 
-/* ── Low stock ───────────────────────────────────────────────────────────── */
+/* ── Low stock ── */
 .low-warn{background:#FFF3CD;border:1.5px solid #FFC107;border-radius:8px;
           padding:10px 16px;font-size:12px;color:#856404;font-weight:600;
           display:none;text-align:center}
 .low-warn.show{display:block}
 
-/* ── Actions ─────────────────────────────────────────────────────────────── */
+/* ── Actions ── */
 .actions{padding:16px 20px;display:flex;flex-direction:column;gap:10px}
 .btn{width:100%;padding:15px;border:none;border-radius:8px;font-size:14px;
      font-weight:700;cursor:pointer;text-align:center;transition:all .12s;
      -webkit-tap-highlight-color:transparent;display:block}
 .btn:active{transform:scale(.98)}
-.btn-restock{background:#c0392b;color:#fff;border:2px solid transparent}
+.btn-restock{background:#c0392b;color:#fff}
 .btn-restock:hover{background:#a93226}
-.btn-ds{background:#1F4E79;color:#fff}
-.btn-ds:hover{background:#163d61}
+.btn-link{background:#1F4E79;color:#fff}
+.btn-link:hover{background:#163d61}
 
-
-/* ── Also in this drawer ─────────────────────────────────────────────────── */
+/* ── Drawer neighbours ── */
 .drawer-card{padding:16px 20px}
-.drawer-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#aaa;margin-bottom:12px}
+.drawer-title{font-size:11px;font-weight:700;text-transform:uppercase;
+              letter-spacing:.07em;color:#aaa;margin-bottom:12px}
 .drawer-list{display:flex;flex-direction:column;gap:8px}
-.drawer-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:#f7f9fc;border-radius:8px;cursor:pointer;border:1.5px solid #e8eef5;transition:all .12s;text-decoration:none;color:inherit}
+.drawer-item{display:flex;align-items:center;gap:12px;padding:10px 14px;
+             background:#f7f9fc;border-radius:8px;cursor:pointer;
+             border:1.5px solid #e8eef5;transition:all .12s;text-decoration:none;color:inherit}
 .drawer-item:hover{background:#eef6ff;border-color:#2E75B6}
-.drawer-ref{font-size:13px;font-weight:700;color:#1F4E79;white-space:nowrap;min-width:100px}
+.drawer-ref{font-size:13px;font-weight:700;color:#1F4E79;min-width:100px}
 .drawer-desc{font-size:12px;color:#666;flex:1;line-height:1.3}
 .drawer-qty{font-size:12px;font-weight:700;color:#888;white-space:nowrap}
 .drawer-qty.low{color:#c0392b}
 .drawer-spin{font-size:12px;color:#aaa;padding:8px 0}
-/* ── Toast ───────────────────────────────────────────────────────────────── */
+
+/* ── Toast ── */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
        background:#1F4E79;color:#fff;padding:10px 22px;border-radius:8px;
        font-size:13px;font-weight:600;display:none;z-index:999;
-       box-shadow:0 3px 14px rgba(0,0,0,.22);white-space:nowrap;
-       max-width:90vw;text-align:center}
+       box-shadow:0 3px 14px rgba(0,0,0,.22);white-space:nowrap;max-width:90vw;text-align:center}
 .toast.err{background:#c0392b}
 .toast.ok{background:#1E8449}
 </style>
@@ -122,7 +127,7 @@ a{text-decoration:none;color:inherit}
 
 <div class="hdr">
   <div>
-    <div class="hdr-logo">Swagelok Inventory</div>
+    <div class="hdr-logo">Lab Inventory</div>
     <div class="hdr-sub">CARES Lab</div>
   </div>
   <a href="https://v-laf.github.io/swagelok/" class="hdr-back">← All items</a>
@@ -137,25 +142,18 @@ a{text-decoration:none;color:inherit}
 <div class="toast" id="toast"></div>
 
 <script>
-// ── Config ────────────────────────────────────────────────────────────────────
-// Replace with your deployed Apps Script URL after deploying Code.gs
-const API = 'https://script.google.com/macros/s/AKfycby_yfxZTk21_P4LX8YNYZuqSem8ZNkvzF2wtHjjlXqcCpYGDCda77kzosBvrrBQ_eP0/exec';
+const API       = 'https://script.google.com/macros/s/AKfycby_yfxZTk21_P4LX8YNYZuqSem8ZNkvzF2wtHjjlXqcCpYGDCda77kzosBvrrBQ_eP0/exec';
+const ITEM_BASE = 'https://v-laf.github.io/swagelok/item/';
+const MAX_ATTEMPTS = 3;
 
-// ── Get ref from URL path ─────────────────────────────────────────────────────
-// URL: v-laf.github.io/swagelok/item/SS-400-6
-// GitHub Pages serves item.html for /item/* via 404.html redirect trick
+// ── Helpers ────────────────────────────────────────────────────────────────
 function getRefFromPath() {
-  // First check query param (set by 404.html redirect)
   const params = new URLSearchParams(window.location.search);
   if (params.get('ref')) return decodeURIComponent(params.get('ref'));
-  // Then check URL path directly
-  const path = window.location.pathname;
-  const match = path.match(/\/item\/(.+)$/);
-  if (match) return decodeURIComponent(match[1]);
-  return '';
+  const m = window.location.pathname.match(/\/item\/(.+)$/);
+  return m ? decodeURIComponent(m[1]) : '';
 }
 
-// ── Toast ─────────────────────────────────────────────────────────────────────
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -165,27 +163,38 @@ function showToast(msg, type) {
   t._t = setTimeout(() => t.style.display = 'none', 3000);
 }
 
-// ── Quantity ──────────────────────────────────────────────────────────────────
+function specVal(v) {
+  if (!v || v === 'N/A' || v === '') return '<span class="spec-na">—</span>';
+  return '<span class="spec-value">' + v + '</span>';
+}
+
+function jsonpFetch(url) {
+  return new Promise((resolve, reject) => {
+    const cb = 'cb_' + Math.random().toString(36).slice(2);
+    const script = document.createElement('script');
+    const timer = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 10000);
+    function cleanup() { clearTimeout(timer); delete window[cb]; if (script.parentNode) script.parentNode.removeChild(script); }
+    window[cb] = d => { cleanup(); resolve(d); };
+    script.onerror = () => { cleanup(); reject(new Error('Load error')); };
+    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cb;
+    document.head.appendChild(script);
+  });
+}
+
+// ── Actions ────────────────────────────────────────────────────────────────
 async function adjustQty(ref, delta, valEl, spinEl) {
   spinEl.style.display = 'block';
   try {
-    // For POST we use JSONP too — append action params to URL
-    // Apps Script reads them from e.parameter for GET-style JSONP
     const d = await jsonpFetch(API + '?action=adjustQty&ref=' + encodeURIComponent(ref) + '&delta=' + delta);
     if (d.ok) {
       valEl.textContent = d.qty;
       showToast(delta > 0 ? '+1 saved — ' + d.qty + ' in stock' : '-1 saved — ' + d.qty + ' in stock', 'ok');
       checkLow(d.qty);
-    } else {
-      showToast('Error: ' + (d.error || 'unknown'), 'err');
-    }
-  } catch(e) {
-    showToast('Network error — try again', 'err');
-  }
+    } else { showToast('Error: ' + (d.error || 'unknown'), 'err'); }
+  } catch(e) { showToast('Network error — try again', 'err'); }
   spinEl.style.display = 'none';
 }
 
-// ── Restock ───────────────────────────────────────────────────────────────────
 async function requestRestock(ref, desc, qty, location, link, btn) {
   btn.disabled = true;
   btn.textContent = 'Sending…';
@@ -200,7 +209,7 @@ async function requestRestock(ref, desc, qty, location, link, btn) {
     btn.textContent = '✓ Restock request sent';
     btn.style.background = '#D5F5E3';
     btn.style.color = '#1E8449';
-    showToast('✓ Restock email sent', 'ok');
+    showToast('✓ Email sent', 'ok');
   } catch(e) {
     btn.disabled = false;
     btn.textContent = '⚠  Request Restock by Email';
@@ -208,64 +217,169 @@ async function requestRestock(ref, desc, qty, location, link, btn) {
   }
 }
 
-// ── Low stock check ───────────────────────────────────────────────────────────
 function checkLow(qty) {
   const w = document.getElementById('lowWarn');
   if (w) w.classList.toggle('show', (parseInt(qty) || 0) <= 2);
 }
 
-// ── Render item ───────────────────────────────────────────────────────────────
-function specVal(v) {
-  if (!v || v === 'N/A' || v === '') return '<span class="spec-na">—</span>';
-  return '<span class="spec-value">' + v + '</span>';
+// ── Drawer neighbours ──────────────────────────────────────────────────────
+// Cache of all items — populated once the item page loads
+// Reused by loadDrawerNeighbours to avoid a second JSONP call
+let _allItemsCache = null;
+
+async function loadDrawerNeighbours(currentRef, location) {
+  const listEl = document.getElementById('drawerList');
+  if (!listEl || !location) return;
+  try {
+    // Reuse cached data if available, otherwise fetch with a short delay
+    // to avoid JSONP race condition with the initial item fetch
+    let all = _allItemsCache;
+    if (!all) {
+      await new Promise(r => setTimeout(r, 600));
+      all = await jsonpFetch(API + '?loc=' + encodeURIComponent(location));
+      _allItemsCache = all;
+    }
+    const neighbours = all.filter(r =>
+      r.ref !== currentRef &&
+      r.location &&
+      r.location.trim().toLowerCase() === location.trim().toLowerCase()
+    );
+    if (neighbours.length === 0) {
+      const card = document.getElementById('drawerCard');
+      if (card) card.style.display = 'none';
+      return;
+    }
+    listEl.innerHTML = neighbours.map(r => {
+      const isLow    = Number(r.qty) <= 2;
+      const isUnique = (r.uniqueitem || 'Yes').toLowerCase() !== 'no';
+      if (isUnique) {
+        return '<a class="drawer-item" href="' + ITEM_BASE + encodeURIComponent(r.ref) + '">' +
+          '<span class="drawer-ref">' + r.ref + '</span>' +
+          '<span class="drawer-desc">' + r.desc + '</span>' +
+          '<span class="drawer-qty' + (isLow ? ' low' : '') + '">' + r.qty + (isLow ? ' ⚠' : '') + '</span>' +
+          '</a>';
+      } else {
+        return '<div class="drawer-item" style="cursor:default;opacity:.7">' +
+          '<span class="drawer-ref" style="color:#888">' + r.ref + '</span>' +
+          '<span class="drawer-desc">' + r.desc + '</span>' +
+          '<span class="drawer-qty" style="color:#ccc">no page</span>' +
+          '</div>';
+      }
+    }).join('');
+  } catch(e) {
+    console.error('Drawer load error:', e);
+    if (listEl) listEl.innerHTML = '<div class="drawer-spin">Could not load drawer contents</div>';
+  }
 }
 
-function renderItem(item) {
-  const page     = document.getElementById('page');
-  const badgeCls = item.category.replace(/ /g, '-');
+// ── Custom item page renderers per macro category ──────────────────────────
 
-  page.innerHTML = `
+function renderSwagelok(item) {
+  const badgeCls = (item.category || '').replace(/ /g, '-');
+  return `
     <div class="card item-hdr">
       <div class="item-ref">${item.ref}</div>
       <div class="item-desc">${item.desc}</div>
       <div class="item-meta">
-        <span class="badge ${badgeCls}">${item.category}</span>
-        ${item.location
-          ? '<span class="meta-tag">📍 ' + item.location + '</span>'
-          : '<span class="meta-tag" style="color:#f0ad4e">📍 No location set</span>'}
-        <span class="meta-tag">${item.material}</span>
-        <span class="meta-tag">${item.system}</span>
+        <span class="badge ${badgeCls}">${item.category || '—'}</span>
+        ${item.location ? '<span class="meta-tag">📍 ' + item.location + '</span>' : '<span class="meta-tag" style="color:#f0ad4e">📍 No location set</span>'}
+        <span class="meta-tag">${item.material || ''}</span>
+        <span class="macro-badge macro-Swagelok">Swagelok</span>
       </div>
     </div>
-
     <div class="card specs">
-      <div>
-        <div class="spec-label">Connection 1</div>
-        ${specVal(item.conn1)}
-      </div>
-      <div>
-        <div class="spec-label">Connection 2</div>
-        ${specVal(item.conn2)}
-      </div>
-      <div>
-        <div class="spec-label">Connection 3</div>
-        ${specVal(item.conn3)}
-      </div>
-      <div>
-        <div class="spec-label">Connection 4</div>
-        ${specVal(item.conn4)}
-      </div>
-      <div>
-        <div class="spec-label">Type</div>
-        ${specVal(item.type)}
-      </div>
-      <div>
-        <div class="spec-label">No. of Connections</div>
-        ${specVal(item.noconn)}
+      <div><div class="spec-label">Connection 1</div>${specVal(item.conn1)}</div>
+      <div><div class="spec-label">Connection 2</div>${specVal(item.conn2)}</div>
+      <div><div class="spec-label">Connection 3</div>${specVal(item.conn3)}</div>
+      <div><div class="spec-label">Connection 4</div>${specVal(item.conn4)}</div>
+      <div><div class="spec-label">Type</div>${specVal(item.type)}</div>
+      <div><div class="spec-label">No. of Connections</div>${specVal(item.noconn)}</div>
+    </div>`;
+}
+
+function renderOptics(item) {
+  const badgeCls = (item.category || '').replace(/ /g, '-');
+  return `
+    <div class="card item-hdr">
+      <div class="item-ref">${item.ref}</div>
+      <div class="item-desc">${item.desc}</div>
+      <div class="item-meta">
+        <span class="badge ${badgeCls}">${item.category || '—'}</span>
+        ${item.location ? '<span class="meta-tag">📍 ' + item.location + '</span>' : '<span class="meta-tag" style="color:#f0ad4e">📍 No location set</span>'}
+        <span class="macro-badge macro-Optics">Optics</span>
       </div>
     </div>
+    <div class="card specs">
+      <div><div class="spec-label">Focal Distance</div>${specVal(item.focaldist)}</div>
+      <div><div class="spec-label">Size</div>${specVal(item.size)}</div>
+      <div><div class="spec-label">Wavelength Range</div>${specVal(item.wavelength)}</div>
+      <div><div class="spec-label">Type</div>${specVal(item.category)}</div>
+    </div>`;
+}
 
-    <div class="low-warn" id="lowWarn">⚠️ Low stock — consider requesting a restock</div>
+function renderEquipment(item) {
+  const badgeCls = (item.category || '').replace(/ /g, '-');
+  return `
+    <div class="card item-hdr">
+      <div class="item-ref">${item.ref}</div>
+      <div class="item-desc">${item.desc}</div>
+      <div class="item-meta">
+        <span class="badge ${badgeCls}">${item.category || '—'}</span>
+        ${item.location ? '<span class="meta-tag">📍 ' + item.location + '</span>' : '<span class="meta-tag" style="color:#f0ad4e">📍 No location set</span>'}
+        <span class="macro-badge macro-Equipment">Equipment</span>
+      </div>
+    </div>`;
+}
+
+function renderCables(item) {
+  const badgeCls = (item.category || '').replace(/ /g, '-');
+  return `
+    <div class="card item-hdr">
+      <div class="item-ref">${item.ref}</div>
+      <div class="item-desc">${item.desc}</div>
+      <div class="item-meta">
+        <span class="badge ${badgeCls}">${item.category || '—'}</span>
+        ${item.location ? '<span class="meta-tag">📍 ' + item.location + '</span>' : '<span class="meta-tag" style="color:#f0ad4e">📍 No location set</span>'}
+        <span class="macro-badge macro-Cables">Cables & Connectors</span>
+      </div>
+    </div>
+    <div class="card specs">
+      <div><div class="spec-label">Category</div>${specVal(item.category)}</div>
+      <div><div class="spec-label">Type</div>${specVal(item.type)}</div>
+    </div>`;
+}
+
+function renderGeneric(item) {
+  return `
+    <div class="card item-hdr">
+      <div class="item-ref">${item.ref}</div>
+      <div class="item-desc">${item.desc}</div>
+      <div class="item-meta">
+        ${item.location ? '<span class="meta-tag">📍 ' + item.location + '</span>' : '<span class="meta-tag" style="color:#f0ad4e">📍 No location set</span>'}
+        <span class="macro-badge macro-Tools">${item.macrocat || ''}</span>
+      </div>
+    </div>`;
+}
+
+function getSpecsHTML(item) {
+  const mc = (item.macrocat || 'Swagelok').toLowerCase();
+  if (mc === 'swagelok')              return renderSwagelok(item);
+  if (mc === 'optics')                return renderOptics(item);
+  if (mc === 'equipment')             return renderEquipment(item);
+  if (mc === 'cables and connectors') return renderCables(item);
+  return renderGeneric(item);
+}
+
+// ── Full item page render ──────────────────────────────────────────────────
+function renderItem(item) {
+  const page      = document.getElementById('page');
+  const hasLink   = item.link && item.link !== 'N/A' && item.link !== '';
+  const hasRestock = true; // always show restock button
+
+  page.innerHTML =
+    getSpecsHTML(item) +
+
+    `<div class="low-warn" id="lowWarn">⚠️ Low stock — consider requesting a restock</div>
 
     <div class="card qty-card">
       <div class="qty-title">Stock Quantity</div>
@@ -283,150 +397,41 @@ function renderItem(item) {
       <button class="btn btn-restock" id="btnRestock" ontouchstart="">
         ⚠️&nbsp; Request Restock by Email
       </button>
-      ${item.link
-        ? '<a href="' + item.link + '" target="_blank" class="btn btn-ds">📄&nbsp; Swagelok Datasheet</a>'
-        : ''}
+      ${hasLink ? '<a href="' + item.link + '" target="_blank" class="btn btn-link">🔗&nbsp; View Product Page</a>' : ''}
     </div>
 
     ${item.location
       ? '<div class="card drawer-card" id="drawerCard"><div class="drawer-title">📦 Also in this location</div><div class="drawer-list" id="drawerList"><div class="drawer-spin">Loading…</div></div></div>'
-      : ''}
-  `;
+      : ''}`;
 
-  // Wire up events
   const qtyVal  = document.getElementById('qtyVal');
   const qtySpin = document.getElementById('qtySpin');
 
-  document.getElementById('btnMinus').addEventListener('click', () =>
-    adjustQty(item.ref, -1, qtyVal, qtySpin));
-  document.getElementById('btnPlus').addEventListener('click', () =>
-    adjustQty(item.ref, +1, qtyVal, qtySpin));
+  document.getElementById('btnMinus').addEventListener('click', () => adjustQty(item.ref, -1, qtyVal, qtySpin));
+  document.getElementById('btnPlus').addEventListener('click',  () => adjustQty(item.ref, +1, qtyVal, qtySpin));
   document.getElementById('btnRestock').addEventListener('click', function() {
-    requestRestock(item.ref, item.desc, parseInt(qtyVal.textContent) || 0,
-                   item.location, item.link, this);
+    requestRestock(item.ref, item.desc, parseInt(qtyVal.textContent) || 0, item.location, item.link || '', this);
   });
 
   checkLow(item.qty);
-  document.title = item.ref + ' — Swagelok';
+  document.title = item.ref + ' — Lab Inventory';
 }
 
 function renderError(ref) {
   document.getElementById('page').innerHTML = `
     <div class="card error-page">
       <h2>Item not found</h2>
-      <p>No item with reference <strong>${ref}</strong> exists in the inventory.<br>
-      The NFC tag may need to be reprogrammed.</p>
+      <p>No item with reference <strong>${ref}</strong> exists in the inventory.</p>
       <a href="https://v-laf.github.io/swagelok/" class="back-btn">← Back to inventory</a>
-    </div>
-  `;
-  document.title = 'Not found — Swagelok';
+    </div>`;
+  document.title = 'Not found — Lab Inventory';
 }
 
-
-// ── Also in this drawer ───────────────────────────────────────────────────────
-async function loadDrawerNeighbours(currentRef, location) {
-  const listEl = document.getElementById('drawerList');
-  if (!listEl || !location) return;
-
-  try {
-    // Fetch all items and filter by same location, exclude current item
-    const all = await jsonpFetch(API);
-    const neighbours = all.filter(r =>
-      r.ref !== currentRef &&
-      r.location &&
-      r.location.trim().toLowerCase() === location.trim().toLowerCase()
-    );
-
-    if (neighbours.length === 0) {
-      // Hide the whole card if nothing else is here
-      const card = document.getElementById('drawerCard');
-      if (card) card.style.display = 'none';
-      return;
-    }
-
-    listEl.innerHTML = neighbours.map(r => {
-      const isLow = Number(r.qty) <= 2;
-      return '<a class="drawer-item" href="' + ITEM_BASE + encodeURIComponent(r.ref) + '">' +
-        '<span class="drawer-ref">' + r.ref + '</span>' +
-        '<span class="drawer-desc">' + r.desc + '</span>' +
-        '<span class="drawer-qty' + (isLow ? ' low' : '') + '">' + r.qty + (isLow ? ' ⚠' : '') + '</span>' +
-        '</a>';
-    }).join('');
-
-  } catch(e) {
-    if (listEl) listEl.innerHTML = '<div class="drawer-loading">Could not load drawer contents</div>';
-  }
-}
-
-
-// ── Also in this drawer ───────────────────────────────────────────────────────
-async function loadDrawerNeighbours(currentRef, location) {
-  const listEl = document.getElementById('drawerList');
-  if (!listEl || !location) return;
-  try {
-    const all = await jsonpFetch(API);
-    const neighbours = all.filter(r =>
-      r.ref !== currentRef &&
-      r.location &&
-      r.location.trim().toLowerCase() === location.trim().toLowerCase()
-    );
-    if (neighbours.length === 0) {
-      const card = document.getElementById('drawerCard');
-      if (card) card.style.display = 'none';
-      return;
-    }
-    listEl.innerHTML = neighbours.map(r => {
-      const isLow = Number(r.qty) <= 2;
-      return '<a class="drawer-item" href="' + ITEM_BASE + encodeURIComponent(r.ref) + '">' +
-        '<span class="drawer-ref">' + r.ref + '</span>' +
-        '<span class="drawer-desc">' + r.desc + '</span>' +
-        '<span class="drawer-qty' + (isLow ? ' low' : '') + '">' + r.qty + (isLow ? ' ⚠' : '') + '</span>' +
-        '</a>';
-    }).join('');
-  } catch(e) {
-    if (listEl) listEl.innerHTML = '<div class="drawer-spin">Could not load drawer contents</div>';
-  }
-}
-
-// ── Load ──────────────────────────────────────────────────────────────────────
-
-// ── JSONP helper — bypasses CORS for GET requests to Apps Script ──────────────
-function jsonpFetch(url) {
-  return new Promise((resolve, reject) => {
-    const cbName = 'cb_' + Math.random().toString(36).slice(2);
-    const script = document.createElement('script');
-    const timer  = setTimeout(() => {
-      cleanup();
-      reject(new Error('Timeout'));
-    }, 10000);
-
-    function cleanup() {
-      clearTimeout(timer);
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[cbName] = function(data) {
-      cleanup();
-      resolve(data);
-    };
-
-    script.onerror = () => { cleanup(); reject(new Error('Script load error')); };
-    script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + cbName;
-    document.head.appendChild(script);
-  });
-}
-
+// ── Load ───────────────────────────────────────────────────────────────────
 async function loadItem() {
   const ref = getRefFromPath();
-  if (!ref) {
-    window.location.href = 'https://v-laf.github.io/swagelok/';
-    return;
-  }
+  if (!ref) { window.location.href = 'https://v-laf.github.io/swagelok/'; return; }
 
-  // Retry logic: Apps Script cold-starts can take 3–5s on first hit.
-  // Try up to 3 times with a 6s timeout each before showing an error.
-  const MAX_ATTEMPTS = 3;
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
       document.getElementById('loading').innerHTML =
@@ -439,19 +444,26 @@ async function loadItem() {
         renderError(ref);
       } else {
         renderItem(d);
-        if (d.location) loadDrawerNeighbours(d.ref, d.location);
+        if (d.location) {
+          // Pre-fetch all items and cache before calling drawer function
+          // This avoids a second JSONP call competing with any pending requests
+          jsonpFetch(API).then(all => {
+            _allItemsCache = all;
+            loadDrawerNeighbours(d.ref, d.location);
+          }).catch(() => {
+            loadDrawerNeighbours(d.ref, d.location);
+          });
+        }
       }
-      return; // success — stop retrying
-
+      return;
     } catch(e) {
       if (attempt === MAX_ATTEMPTS) {
-        // All attempts failed
-        document.getElementById('page').innerHTML =
-          `<div class="card" style="padding:24px;text-align:center">
+        document.getElementById('page').innerHTML = `
+          <div class="card" style="padding:24px;text-align:center">
             <p style="color:#c0392b;font-weight:700;margin-bottom:8px">Could not load item</p>
             <p style="font-size:13px;color:#888;margin-bottom:16px">
               The inventory API did not respond after ${MAX_ATTEMPTS} attempts.<br>
-              This usually means the Apps Script is sleeping — try again in a few seconds.
+              This usually means the Apps Script is cold-starting — try again in a few seconds.
             </p>
             <button onclick="loadItem()" style="padding:10px 20px;background:#1F4E79;color:#fff;
               border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;
@@ -461,7 +473,6 @@ async function loadItem() {
               font-weight:600;display:inline-block">← All items</a>
           </div>`;
       }
-      // Otherwise loop and try again
     }
   }
 }
