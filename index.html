@@ -227,9 +227,11 @@ td{padding:10px 13px;vertical-align:middle}
 <div class="toast" id="toast"></div>
 
 <script>
-const API       = 'https://script.google.com/macros/s/AKfycby_yfxZTk21_P4LX8YNYZuqSem8ZNkvzF2wtHjjlXqcCpYGDCda77kzosBvrrBQ_eP0/exec';
-const ITEM_BASE = 'https://v-laf.github.io/swagelok/item/';
+const API        = 'https://script.google.com/macros/s/AKfycby_yfxZTk21_P4LX8YNYZuqSem8ZNkvzF2wtHjjlXqcCpYGDCda77kzosBvrrBQ_eP0/exec';
+const ITEM_BASE  = 'https://v-laf.github.io/swagelok/item/';
 const MACRO_ORDER = ['Swagelok','Optics','Equipment','Tools','Cables and Connectors','Other'];
+const CACHE_KEY  = 'labinv_data_v1';
+const CACHE_TTL  = 10 * 60 * 1000; // 10 minutes in ms
 
 // Per-category filter config:
 // Each entry lists which filter panel IDs are VISIBLE for that macro category
@@ -482,21 +484,58 @@ function clearFilters() {
   render();
 }
 
+// ── Cache helpers ─────────────────────────────────────────────────────────
+function cacheRead() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) return null;
+    return data;
+  } catch(e) { return null; }
+}
+
+function cacheWrite(data) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+  } catch(e) { /* storage full or unavailable — ignore */ }
+}
+
+function applyData(newData, fromCache) {
+  DATA = newData;
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('tbl').style.display = 'table';
+  const age = fromCache ? ' (cached)' : '';
+  document.getElementById('hdrStatus').textContent = DATA.length + ' items' + age;
+  buildMacroBar();
+  updateFilters();
+  render();
+}
+
 // ── Load ───────────────────────────────────────────────────────────────────
 async function loadData() {
+  // Step 1: show cached data immediately if available
+  const cached = cacheRead();
+  if (cached) {
+    applyData(cached, true);
+  }
+
+  // Step 2: fetch fresh slim data in background (or foreground if no cache)
   try {
-    DATA = await jsonpFetch(API);
-    if (!Array.isArray(DATA)) throw new Error('Bad response');
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('tbl').style.display = 'table';
-    document.getElementById('hdrStatus').textContent = DATA.length + ' items';
-    buildMacroBar();
-    updateFilters();
-    render();
+    const fresh = await jsonpFetch(API + '?slim=1');
+    if (!Array.isArray(fresh)) throw new Error('Bad response');
+    cacheWrite(fresh);
+    applyData(fresh, false);
   } catch(e) {
-    document.getElementById('loading').innerHTML =
-      '<p style="color:#c0392b;padding:20px">Failed to load — check API URL</p>';
-    document.getElementById('hdrStatus').textContent = 'Load failed';
+    if (!cached) {
+      // Only show error if we have nothing to display
+      document.getElementById('loading').innerHTML =
+        '<p style="color:#c0392b;padding:20px">Failed to load — check network connection</p>';
+      document.getElementById('hdrStatus').textContent = 'Load failed';
+    } else {
+      // Silently keep showing cached data if background refresh fails
+      document.getElementById('hdrStatus').textContent = DATA.length + ' items (offline)';
+    }
   }
 }
 
